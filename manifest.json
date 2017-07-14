@@ -1,0 +1,31 @@
+{
+	"jobs" : {
+		"job::{{NAMESPACE}}::{{APP_NAME}}" : {
+			"packages" : [
+				{
+					"fqn" : "{{PACKAGE_FQN}}"
+				}
+			],
+			"exposed_ports" : [
+				0
+			],
+			"required_ports" : [
+				0
+			],
+			"routes" : [
+				{
+					"type" : "{{ENDPOINT_TYPE}}",
+					"endpoint" : "{{ENDPOINT_VALUE}}",
+					"config" : {
+						"/" : [
+							{
+								"port" : 0
+							}
+						]
+					}
+				}
+			],
+			"state": "started"
+		}
+	}
+}
