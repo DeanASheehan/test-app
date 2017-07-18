@@ -1,10 +1,12 @@
 {
 	"jobs" : {
-		"job::{{NAMESPACE}}::{{APP_NAME}}" : {
+		"job::{{stage.namespace}}::{{stage.app-name}}" : {
 			"packages" : [
+				{{#packages}}
 				{
-					"fqn" : "{{PACKAGE_FQN}}"
+					"fqn" : "{{fqn}}"
 				}
+				{{/packages}}
 			],
 			"exposed_ports" : [
 				0
@@ -14,8 +16,8 @@
 			],
 			"routes" : [
 				{
-					"type" : "{{ENDPOINT_TYPE}}",
-					"endpoint" : "{{ENDPOINT_VALUE}}",
+					"type" : "{{stage.endpoint-type}}",
+					"endpoint" : "{{stage.endpoint}}",
 					"config" : {
 						"/" : [
 							{
