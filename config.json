@@ -1,5 +1,3 @@
 {
-	"title" : "Title",
-	"version" : "Version",
-	"stage" : "Stage"
+	"identifier" : "master/v1",
 }
