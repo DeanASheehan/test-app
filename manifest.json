@@ -1,6 +1,6 @@
 {
 	"jobs" : {
-		"job::{{stage.namespace}}::{{stage.app-name}}" : {
+		"job::{{stage.namespace}}::{{stage.appName}}" : {
 			"packages" : [
 				{{#packages}}
 				{
@@ -16,7 +16,7 @@
 			],
 			"routes" : [
 				{
-					"type" : "{{stage.endpoint-type}}",
+					"type" : "{{stage.endpointType}}",
 					"endpoint" : "{{stage.endpoint}}",
 					"config" : {
 						"/" : [
