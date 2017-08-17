@@ -1,0 +1,34 @@
+{
+	"jobs" : {
+		"job::{{stage.namespace}}::{{stage.appName}}" : {
+			"packages" : [
+				{{#packages}}
+				{
+					"fqn" : "{{fqn}}"
+				}
+				{{^last}},{{/last}}
+				{{/packages}}
+			],
+			"exposed_ports" : [
+				0
+			],
+			"required_ports" : [
+				0
+			],
+			"routes" : [
+				{
+					"type" : "{{stage.endpointType}}",
+					"endpoint" : "{{stage.endpoint}}",
+					"config" : {
+						"/" : [
+							{
+								"port" : 0
+							}
+						]
+					}
+				}
+			],
+			"state": "started"
+		}
+	}
+}
