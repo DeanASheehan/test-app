@@ -28,6 +28,9 @@
 					}
 				}
 			],
+			"env" : {
+				"VERSION" : "{{acquired.version}}"
+			},
 			"state": "started"
 		}
 	}

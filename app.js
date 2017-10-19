@@ -1,58 +1,117 @@
-var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
+(function () {
+  'use strict';
 
-var routes = require('./routes/index');
+  var app = angular.module('examples', ['chart.js', 'ui.bootstrap']);
 
-var app = express();
-
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
-
-// uncomment after placing your favicon in /public
-//app.use(favicon(__dirname + '/public/favicon.ico'));
-app.use(logger('dev'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
-
-app.use('/', routes);
-
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
-});
-
-// error handlers
-
-// development error handler
-// will print stacktrace
-if (app.get('env') === 'development') {
-  app.use(function(err, req, res, next) {
-    res.status(err.status || 500);
-    res.render('error', {
-      message: err.message,
-      error: err
+  app.config(function (ChartJsProvider) {
+    ChartJsProvider.setOptions({
+        colors: [ '#803690', '#00ADF9', '#DCDCDC', '#46BFBD', '#FDB45C', '#949FB1', '#4D5360'],
+        responsive: true,
+        animation: false,
+        scaleOverride: true,
+        scaleStartValue: 0,
+        scaleStepWidth: 10,
+        scaleSteps: 10,//
+        legendTemplate: ' '
     });
   });
-}
 
-// production error handler
-// no stacktraces leaked to user
-app.use(function(err, req, res, next) {
-  res.status(err.status || 500);
-  res.render('error', {
-    message: err.message,
-    error: {}
-  });
-});
+  app.controller('DataCtrl',['$scope','$http',function($scope,$http){
+    $scope.data = [];
+    $http({
+        method: 'GET',
+        url: '/data'
+      })
+      .then(
+        function success(response){
+            $scope.data = response.data;
+        },
+        function failed (response) {
+        }
+    )
+  }])
 
+  app.controller('BarCtrl', ['$scope', '$timeout', '$interval','$location','$http', function ($scope, $timeout, $interval, $location, $http) {
 
-module.exports = app;
+    $scope.options = { scaleShowVerticalLines: false };
+
+    $scope.labels = [];
+
+    $scope.data = []
+    
+    var rawData = [];
+
+    $scope.labelledData = []
+
+    $interval(function(){
+        $http({
+            method: 'GET',
+            url: '/version'
+          })
+          .then(
+            function successCallback(response) {
+                rawData.push(response.data.version);
+                if (rawData.length == 1) {
+                    for (let i = 0; i < 99; i++) {
+                        rawData.push(response.data.version);
+                    }
+                }
+             },
+            function errorCallback(response) {
+                rawData.push('error');
+                if (rawData.length == 1) {
+                    for (let i = 0; i < 99; i++) {
+                        rawData.push('error');
+                    }
+                }
+             }
+        )
+    },100)
+
+    $interval(function () {
+        if (rawData.length > 100) {
+            rawData = rawData.splice(rawData.length-100,100);
+        }
+        var data = {}
+        for (var i = 0; i < rawData.length; i++) {
+            data[rawData[i]] = data[rawData[i]] ? data[rawData[i]]+1 : 1;
+        }
+        for (var k of Object.keys(data)) {
+            var labelIndex = -1;
+            for (var l = 0; l < $scope.labels.length; l++) {
+                if ($scope.labels[l] == k) {
+                    labelIndex = l;
+                    break;
+                }
+            }
+            if (labelIndex == -1) {
+                labelIndex = $scope.labels.length;
+                $scope.labels.push(k)
+                var length = $scope.data.length;
+                $scope.data.push(data[k]);
+            } else {
+                $scope.data[labelIndex] = data[k]
+            }  
+        }
+        var spliced = false;
+        do {
+            spliced=false;
+            for (var i = 0; i < $scope.labels.length; i++) {
+                if (data[$scope.labels[i]] == undefined) {
+                    $scope.data.splice(i,1);
+                    $scope.labels.splice(i,1);
+                    spliced=true;
+                    break;
+                }
+            }
+        } while (spliced);
+
+        $scope.labelledData = [];
+        for (var i = 0; i < $scope.data.length; i++) {
+            $scope.labelledData.push({label:$scope.labels[i],value:$scope.data[i]})
+        }
+    },500)
+
+  }]);
+
+})();

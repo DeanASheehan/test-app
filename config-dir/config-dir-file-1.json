@@ -1,5 +1,5 @@
 {
 	"value" : "{{stage.name}}",
-	"secret1" : "{{pipeline.secret1}}",
-	"secret2" : "{{pipeline.secret2}}"
+	"sensitive" : "{{pipeline.secret1}}",
+	"version" : "{{acquired.version}}"
 }

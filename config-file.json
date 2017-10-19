@@ -1,3 +1,3 @@
 {
-	"value" : "{{stage.namespace}}"
+	"value" : "{{pipeline.name}}"
 }
